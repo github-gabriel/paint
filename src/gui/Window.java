@@ -67,6 +67,8 @@ public class Window extends JFrame implements ActionListener {
 
 		this.setJMenuBar(menuBar);
 
+		this.repaint();
+
 	}
 
 	@Override
@@ -99,7 +101,7 @@ public class Window extends JFrame implements ActionListener {
 			optionPane.setMessage(new Object[] { "Select a value: ", slider });
 			optionPane.setMessageType(JOptionPane.QUESTION_MESSAGE);
 			optionPane.setOptionType(JOptionPane.OK_CANCEL_OPTION);
-			JDialog dialog = optionPane.createDialog(this, "My Slider");
+			JDialog dialog = optionPane.createDialog(this, "Brush Size");
 			dialog.setVisible(true);
 			Settings.BRUSH_WIDTH = (int) optionPane.getInputValue();
 		}
