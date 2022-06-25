@@ -1,11 +1,13 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
 
@@ -22,24 +24,23 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import drucken.PrintObject;
 import settings.Settings;
 
 public class Window extends JFrame implements ActionListener {
 
-	JMenu file, brush;
+	JMenu file, brush, print;
 
 	JMenuBar menuBar;
 
-	JMenuItem save, color, size;
+	JMenuItem save, color, size, printdialog, clear;
 
 	DrawingArea panel = new DrawingArea();
 
 	public Window() {
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
+		this.setPreferredSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
 		this.add(panel);
 
 		file = new JMenu("File");
@@ -48,8 +49,11 @@ public class Window extends JFrame implements ActionListener {
 
 		save = new JMenuItem("Save");
 		save.addActionListener(this);
+		clear = new JMenuItem("Clear");
+		clear.addActionListener(this);
 
 		file.add(save);
+		file.add(clear);
 
 		menuBar.add(file);
 
@@ -65,9 +69,21 @@ public class Window extends JFrame implements ActionListener {
 
 		menuBar.add(brush);
 
+		print = new JMenu("Print");
+
+		printdialog = new JMenuItem("Printer Dialog");
+		printdialog.addActionListener(this);
+
+		print.add(printdialog);
+
+		menuBar.add(print);
+
 		this.setJMenuBar(menuBar);
 
-		this.repaint();
+		this.setResizable(false);
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
 
 	}
 
@@ -106,6 +122,36 @@ public class Window extends JFrame implements ActionListener {
 			Settings.BRUSH_WIDTH = (int) optionPane.getInputValue();
 		}
 
+		if(e.getSource() == printdialog){
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					PrinterJob printerJob = PrinterJob.getPrinterJob();
+
+					PageFormat pageFormat = printerJob.defaultPage();
+					pageFormat.setOrientation(PageFormat.LANDSCAPE);
+
+					printerJob.setPrintable(new PrintObject(), pageFormat);
+
+					if(printerJob.printDialog()){
+						try {
+							printerJob.print();
+						} catch (PrinterException e1) {
+							throw new RuntimeException(e1);
+						}
+					}
+				}
+			});
+		}
+
+		if(e.getSource() == clear){
+			panel.listX.clear();
+			panel.listY.clear();
+			panel.listColor.clear();
+			panel.listWidth.clear();
+			panel.repaint();
+		}
+
 	}
 
 	public void save(String filepath, int width, int height) {
@@ -140,6 +186,10 @@ public class Window extends JFrame implements ActionListener {
 		};
 		slider.addChangeListener(changeListener);
 		return slider;
+	}
+
+	public DrawingArea getPanel(){
+		return panel;
 	}
 
 }

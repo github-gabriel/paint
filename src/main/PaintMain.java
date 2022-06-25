@@ -4,10 +4,16 @@ import gui.Window;
 
 public class PaintMain {
 
+	static Window window;
+
 	public static void main(String[] args) {
 		
-		Window window = new Window();
+		window = new Window();
 		
+	}
+
+	public static Window getWindow(){
+		return window;
 	}
 
 }

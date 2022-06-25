@@ -34,8 +34,8 @@ public class DrawingArea extends JPanel implements MouseMotionListener, KeyListe
 
 	public DrawingArea() {
 
+		this.setPreferredSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
 		this.setForeground(color);
-		this.setSize(new Dimension(Settings.WIDTH, Settings.HEIGHT));
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 		this.addMouseMotionListener(this);
@@ -101,6 +101,10 @@ public class DrawingArea extends JPanel implements MouseMotionListener, KeyListe
 			g.fillRoundRect(listX.get(i), listY.get(i), listWidth.get(i), listWidth.get(i), 100, 100);
 		}
 
+	}
+
+	public Graphics2D getG2D(){
+		return g2D;
 	}
 
 }
